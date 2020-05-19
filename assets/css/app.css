@@ -1,0 +1,59 @@
+/* This file is for your main application css. */
+
+@import "./phoenix.css";
+
+div.debug {
+    border:1px solid grey;
+    color: #888;
+    width: 200px;
+    padding:5px;
+    clear: both;
+    display: none;
+}
+
+.none {display:none;}
+
+div.debug p {margin-bottom:0}
+div.debug p a {color: #00C;}
+
+div button {margin-right: 5px;}
+div.manageButtons {margin-bottom: 10px;}
+div.votingButtons {width: 320px; margin-bottom:50px;}
+div.votingButtons button {width:70px;}
+
+.vote {width: 250px; height: 30px;}
+.vote div {float:left;}
+.vote .nick {width: 200px;}
+.vote .number {width:30px;}
+.vote .zero {display:none;}
+.vote .hidden {background-color:black;}
+
+.stats {margin-bottom:20px;}
+
+.arow {height: 20px; width:250px; clear:both; }
+.arow div {float: left;}
+.stats .arow .label {width: 200px;}
+.arow .label {width: 100px;}
+
+.votes {margin-right:50px;}
+.votes, .results {float:left;}
+
+.results {border: 1px solid #aaa;
+          padding:10px;
+          width:260px;}
+
+.statsbox .title {font-weight:bold;}
+
+.enterDesc textarea {width:400px;}
+
+.hooray {
+    background-color: lightgray;
+    border: 1px solid #0069d9;
+    color: #0069d9;
+    font-weight: bold;
+    margin-left: 50px;
+    padding: 0 20px;
+}
+
+.vote .owner {font-style: italic;}
+.vote .you {font-weight: bold;}

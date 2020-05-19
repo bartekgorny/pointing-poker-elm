@@ -1,0 +1,13 @@
+<p><%= link "Home", to: Routes.page_path(@conn, :index) %></p>
+<!-- <h1>Pointing Poker - Elixir + Elm</h1> -->
+<div id="session-elm-container"></div>
+
+<div style="height:100px;clear:both;">.</div>
+
+<div class="debug">
+
+<p>For debugging:</p>
+<p class="header" id="session_id">Session id: <%= @id %></p>
+<p><%= link "Exit", to: Routes.session_path(@conn, :index, @id) %></p>
+<p><%= link "Cancel", to: Routes.page_path(@conn, :index) %></p>
+</div>

@@ -1,0 +1,3 @@
+<h1>Planning poker in Elixir and Elm</h1>
+
+<%= link "New session", to: Routes.session_path(@conn, :new_session), class: "button" %>
