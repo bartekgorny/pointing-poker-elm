@@ -43,6 +43,7 @@ if(sid) {
         app.ports.newVotePort.send(payload)
     });
     channel.on("session_state", payload => {
+    console.log(payload);
         app.ports.freshStatePort.send(payload);
     });
     channel.on("showvotes", payload => {

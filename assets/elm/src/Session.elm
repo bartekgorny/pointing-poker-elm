@@ -12,12 +12,14 @@ main = Browser.element {init = init, view = view, update = update, subscriptions
 
 -- TYPES
 
+type alias Desc = Maybe String
+
 type alias ReceivedVote = {nick : String, vote : Int}
 type alias InternalVoteList = Dict.Dict String Int
-type alias ReceivedState = {votes: InternalVoteList, showvotes: Bool, owner : String, description : String}
+type alias ReceivedState = {votes: InternalVoteList, showvotes: Bool, owner : String, description : Maybe String}
 type alias Model = {session_id : String, nick : String, joined : Bool,
                     votes : InternalVoteList, showvotes : Bool, owner : String,
-                    input_desc : String, description : String}
+                    input_desc : String, description : Desc}
 type alias Stats = {average : Float, count : Int}
 type alias Results = {stats : Stats, aggr : Dict.Dict Int Int}
 
@@ -47,7 +49,7 @@ chooseInit opt session_id =
              showvotes = False,
              owner = "",
              input_desc = "",
-             description = ""} in
+             description = Nothing} in
     case opt of
         "normal" ->
             (i, Cmd.none)
@@ -59,8 +61,8 @@ chooseInit opt session_id =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
-        SetNick n -> {model | nick = n}  |> newModel
-        SetDesc n -> {model | input_desc = n}  |> newModel
+        SetNick n -> ({model | nick = n}, Cmd.none)
+        SetDesc n -> ({model | input_desc = n}, Cmd.none)
         SendChangeNick -> (model, sendNickEvent model.nick)
         SendChangeDesc -> (model, sendDescEvent model.input_desc)
         SendVote i ->
@@ -98,7 +100,8 @@ addVoteToModel model v = {model | votes = Dict.insert v.nick v.vote model.votes}
 setState model newstate =
     case newstate of
       Result.Ok ns ->
-          {model | votes = ns.votes, showvotes = ns.showvotes, owner = ns.owner, description = ns.description}
+          {model | votes = ns.votes, showvotes = ns.showvotes, owner = ns.owner,
+                   description = ns.description}
       e ->
           let z = Debug.log "error" e in
           model
@@ -132,7 +135,7 @@ decodeFreshState = Decode.map4 ReceivedState
                                (Decode.field "votes" (Decode.dict Decode.int))
                                (Decode.field "showvotes" Decode.bool)
                                (Decode.field "owner" Decode.string)
-                               (Decode.field "description" Decode.string)
+                               (Decode.maybe (Decode.field "description" Decode.string))
 
 sendNickEvent nick =
     changeNickPort (Encode.string nick)
@@ -153,14 +156,14 @@ view model =
     case model.joined of
         False -> viewInitScreen model
         True ->
-            if isOwner model && model.description == "" then
+            if isOwner model && model.description == Nothing then
                 viewDescScreen model
             else
                 viewMainScreen model
 
 viewMainScreen model =
     div [class "main"] [
-            h1 [class "description"][text (if model.description == "" then "?" else model.description)],
+            h1 [class "description"][text (Maybe.withDefault "?" model.description)],
             div [class "playing"] [text ("voting as \"" ++ model.nick ++ "\"")],
             div [class "playing"] [text ("session managed by \"" ++ model.owner ++ "\"")],
             div [class "manageButtons"] (manageButtons model),

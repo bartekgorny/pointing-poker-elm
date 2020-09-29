@@ -45,20 +45,17 @@ defmodule SessionChannel do
   end
   defp handle_voting_action("reset", _payload, socket) do
     pid = PokerSession.get(socket.assigns.sid)
-    :ok = PokerSession.reset(pid)
-    pok = PokerSession.get(pid, :poker)
+    {:ok, pok} = PokerSession.reset(pid)
     broadcast(socket, "session_state", session_state(pok))
   end
   defp handle_voting_action("setdesc", %{"desc" => desc}, socket) do
     pid = PokerSession.get(socket.assigns.sid)
-    :ok = PokerSession.setdesc(pid, desc)
-    pok = PokerSession.get(pid, :poker)
+    {:ok, pok} = PokerSession.setdesc(pid, desc)
     broadcast(socket, "session_state", session_state(pok))
   end
 
   defp session_state(pok) do
     %{votes: pok.votes, showvotes: pok.showvotes, owner: pok.owner, description: pok.desc}
   end
-
 
 end

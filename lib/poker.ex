@@ -1,5 +1,5 @@
 defmodule Poker do
-  defstruct sid: nil, owner: nil, votes: %{}, showvotes: false, desc: ""
+  defstruct sid: nil, owner: nil, votes: %{}, showvotes: false, desc: nil
   @type t :: %Poker{sid: String.t, owner: String.t, votes: map, showvotes: bool, desc: String.t}
 end
 
@@ -66,12 +66,12 @@ defmodule PokerSession do
     GenServer.call(pid, :showvotes)
   end
 
-  @spec reset(pid()) :: :ok | {:error, term()}
+  @spec reset(pid()) :: {:ok, Poker.t} | {:error, term()}
   def reset(pid) do
     GenServer.call(pid, :reset)
   end
 
-  @spec setdesc(pid(), String.t) :: :ok | {:error, term()}
+  @spec setdesc(pid(), String.t) :: {:ok, Poker.t} | {:error, term()}
   def setdesc(pid, desc) do
     GenServer.call(pid, {:setdesc, desc})
   end
@@ -105,12 +105,12 @@ defmodule PokerSession do
   end
   def handle_call(:reset, _from, state) do
     nvotes = List.foldr (Map.keys state.poker.votes), %{}, fn(i, acc) -> Map.put acc, i, 0 end
-    npok = %{state.poker | :votes => nvotes, :showvotes => false, :desc => ""}
-    {:reply, :ok, %{state | :poker => npok}}
+    npok = %{state.poker | :votes => nvotes, :showvotes => false, :desc => nil}
+    {:reply, {:ok, npok}, %{state | :poker => npok}}
   end
   def handle_call({:setdesc, desc}, _from, state) do
     npok = %{state.poker | :desc => desc}
-    {:reply, :ok, %{state | :poker => npok}}
+    {:reply, {:ok, npok}, %{state | :poker => npok}}
 
   end
   def handle_call(_msg, _from, state) do
